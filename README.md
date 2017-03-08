@@ -14,7 +14,7 @@ The steps of this project are the following:
 
 [//]: # (Image References)
 [image1]: ./examples/data_colection.png
-[image2]: ./examples/HOG_example.jpg
+[image2]: ./examples/YCrCb.jpg
 [image3]: ./examples/sliding_windows.jpg
 [image4]: ./examples/sliding_window.jpg
 [image5]: ./examples/bboxes_and_heat.png
@@ -27,10 +27,15 @@ The steps of this project are the following:
 The code for this step is contained in the IPython notebook located in "./Vehicle-detection-training.ipynb"
 
 ####1. Collecting the Data
-the labeled data for [vehicle](https://s3.amazonaws.com/udacity-sdc/Vehicle_Tracking/vehicles.zip) and [non-vehicle](https://s3.amazonaws.com/udacity-sdc/Vehicle_Tracking/non-vehicles.zip) examples to train my classifier. TThis is the amount of data used: ´cars: 8789 notcars: 8968´. Note: in this case I didn't use any image augmentation technique.  These are some examples of the data, in this case there are only 2 classes:
+the labeled data for [vehicle](https://s3.amazonaws.com/udacity-sdc/Vehicle_Tracking/vehicles.zip) and [non-vehicle](https://s3.amazonaws.com/udacity-sdc/Vehicle_Tracking/non-vehicles.zip) examples to train my classifier. This is the amount of data used: ´cars: 8789 notcars: 8968´. Note: in this case I didn't use any image augmentation technique.  These are some examples of the data, in this case there are only 2 classes:
 ![alt text][image1]
 
-####2. Perform color space change from [RGB](https://en.wikipedia.org/wiki/RGB_color_model) to [YCbCr](https://en.wikipedia.org/wiki/YCbCr)
+####2. Perform color space change from [RGB](https://en.wikipedia.org/wiki/RGB_color_model) to [YCrCb](https://en.wikipedia.org/wiki/YCbCr)
+I explored different color spaces and YCbCr has the best performance for the training (For my testing). 
+Y is the luma, it represents the the brightness in an image (the "black-and-white" or achromatic portion of the image). It has a lot of information about the image shape.
+Cb and Cr are the blue-difference and red-difference chroma components.
+This is the result of this conversion:
+![alt text][image2]
 
 ####3. Extract features
 The features extracted are the following:
@@ -39,15 +44,30 @@ The features extracted are the following:
 * Get color histogram
 
 #####a. Histogram of Oriented Gradients (HOG)
+HOG permits that an image can be described by the distribution of intensity gradients or edge directions. It is some kind of signature of image shape.
+I extracted the HOG features for the 3 channels of the YCbCr. Actually the Y channel (channel 0) has most of the data shape, however when I keept the 3 channels because I got a little bit better accurancy. 
 
-######i. Explain how (and identify where in your code) you extracted HOG features from the training images.
+The code for this step is contained in the fourth code cell (To call the `extract_features` function)  of the IPython notebook `"./Vehicle-detection-training.ipynb"`. The code about the for `skimage.hog()` is in the get_hog_features function of the `lesson_functions.py` file
+Here is an example of one of each of the `vehicle` and `non-vehicle` classes:
+* Channel 0:
+![alt text][image3]
 
-The code for this step is contained in the first code cell of the IPython notebook (or in lines # through # of the file called `some_file.py`).  
+* Channel 1:
+![alt text][image4]
 
-I started by reading in all the `vehicle` and `non-vehicle` images.  Here is an example of one of each of the `vehicle` and `non-vehicle` classes:
+* Channel 2:
+![alt text][image5]
 
-![alt text][image1]
+The parameters used for this are the following:
+`orient = 9 #represents the number of orientation bins that the gradient information will be split up into in the histogram`
+`pix_per_cell = 8 #the image grouped in cells of  8x8 pixels` 
+`cell_per_block = 2 #specifies the local area over which the histogram counts in a given cell will be normalized`
+`hog_channel = 'ALL' #It will process all the channels`
 
+Note: Adding one more channel will increase a lot of the feature size, in this case i keep it only for a couple of accurancy, however it involves longer processing time .
+
+#####b. Get spatial features
+It consist in resize the image in order to get an smaller feature vector, and ap
 I then explored different color spaces and different `skimage.hog()` parameters (`orientations`, `pixels_per_cell`, and `cells_per_block`).  I grabbed random images from each of the two classes and displayed them to get a feel for what the `skimage.hog()` output looks like.
 
 Here is an example using the `YCrCb` color space and HOG parameters of `orientations=8`, `pixels_per_cell=(8, 8)` and `cells_per_block=(2, 2)`:
