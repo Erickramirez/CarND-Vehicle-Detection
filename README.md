@@ -59,71 +59,71 @@ Here is an example of one of each of the `vehicle` and `non-vehicle` classes:
 ![alt text][image5]
 
 The parameters used for this are the following:
-`orient = 9 #represents the number of orientation bins that the gradient information will be split up into in the histogram`
-`pix_per_cell = 8 #the image grouped in cells of  8x8 pixels` 
-`cell_per_block = 2 #specifies the local area over which the histogram counts in a given cell will be normalized`
-`hog_channel = 'ALL' #It will process all the channels`
+* `orient = 9 #represents the number of orientation bins that the gradient information will be split up into in the histogram` 
+* `pix_per_cell = 8 #the image grouped in cells of  8x8 pixels` 
+* `cell_per_block = 2 #specifies the local area over which the histogram counts in a given cell will be normalized`
+* `hog_channel = 'ALL' #It will process all the channels`
 
-Note: Adding one more channel will increase a lot of the feature size, in this case i keep it only for a couple of accurancy, however it involves longer processing time .
+Note: Adding one more channel will increase a lot of the feature size, in this case i keep it only for a couple of accurancy, however it involves longer processing time.
 
 #####b. Get spatial features
-It consist in resize the image in order to get an smaller feature vector, and ap
-I then explored different color spaces and different `skimage.hog()` parameters (`orientations`, `pixels_per_cell`, and `cells_per_block`).  I grabbed random images from each of the two classes and displayed them to get a feel for what the `skimage.hog()` output looks like.
+It consist in resize the image in order to get an smaller feature vector (in 1D version of the same image). I resized the image to 32 x 32 pixeles with 3 channels. the return will be 32 x 32 x3 = 3072. The code about the this feature extraction is  in `bin_spatial` function of the `lesson_functions.py` file.
 
-Here is an example using the `YCrCb` color space and HOG parameters of `orientations=8`, `pixels_per_cell=(8, 8)` and `cells_per_block=(2, 2)`:
+#####c.Get color histogram
+Compute the histogram of the color channels separately and then concatenate them, The number of bins that I used is 16, the result will be 16 x 3 = 48 values.Here is an example of two of each of the `vehicle` and `non-vehicle` classes:
 
+#####d. Concatenate all the features
+I concatenated the 3 extracted feature in order to get a 1 dimension array and then normalize the result.
+This with the following line `X_scaler = StandardScaler().fit(X)` getting the scaler with `X_scaler = StandardScaler().fit(X)`
 
-![alt text][image2]
+####4. Training the data
+I performed the following steps (The code for this step is contained in the fourth code cell of the IPython notebook `"./Vehicle-detection-training.ipynb"`.):
+* Define the labels vector (car and notcars)
+* Split up data into randomized training and test sets, this in order to validate the training classifier and to know if this can be generalized. The training set is 20 % of all the data: `Train set: 14205 test set: 3552`
+* for the classification I used [sklearn.svm.LinearSVC](http://scikit-learn.org/stable/modules/generated/sklearn.svm.LinearSVC.html) .
 
-######b. Explain how you settled on your final choice of HOG parameters.
+####5. Save the parametes and trained classifier in a pickle file
+The data saved in the parameters.p file is the following:
 
-I tried various combinations of parameters and...
+*spatial_feat # Spatial features on or off
+*hist_feat # Histogram features on or off
+*hog_feat # HOG features on or off
+*orient    #for HOG
+*pix_per_cell  #for HOG
+*cell_per_block #for HOG 
+*hog_channel # for HOG
+*spatial_size #for spatial_features
+*hist_bins #for color_hist
+*X_scaler #Scaler for final feature vector
+*svc # trained classifier
+*color_space 
 
-##### 4
-####3. Describe how (and identify where in your code) you trained a classifier using your selected HOG features (and color features if you used them).
+## Implementation
+All the code of this section is in IPython notebook `"./Vehicle-detection-implementation.ipynb"`
+####1. Apply a distortion correction to raw images
 
-I trained a linear SVM using...
+####2. Sliding Window for search
+I performed Sliding for search veehicles in an image. The code about the this feature extraction is  in `slide_window` function of the `lesson_functions.py` file.
+This is how I performed the Sliding Window:
 
-###Sliding Window Search
+Electing the right Sliding Window will affect drastically the time of processing, because it will mean the times that we need to check if there is car or not (perform all the process). For all I elected an overlap of 0.75.
 
-####1. Describe how (and identify where in your code) you implemented a sliding window search.  How did you decide what scales to search and how much to overlap windows?
+####3. Extract features
+It is the same that the Extract features explained before, however all this is in the `find_cars` funtion of the IPython notebook `"./Vehicle-detection-implementation.ipynb"`.). This because it applies some operations onces and not for each slided window.
+Note: in this case I changed the scale of the image, for the training set I used PNG files that are float (0..1) and the video reads JPEG files that are int values (0..255) `img = img.astype(np.float32)/255`
 
-I decided to search random window positions at random scales all over the image and came up with this (ok just kidding I didn't actually ;):
+####4. Find car (Process performed on each Window)
+#####a.Apply feature extraction,  svc classification to get boxes where posible there is a car
+#####b.filter for false positives
+I recorded the positions of positive detections in each frame of the video.  From the positive detections I created a heatmap and then thresholded (in this case it is 2) that map to identify vehicle positions.  I then used `scipy.ndimage.measurements.label()` to identify individual blobs in the heatmap.  I then assumed each blob corresponded to a vehicle.  I constructed bounding boxes to cover the area of each blob detected. I also added in the `draw_labeled_bboxes` function some validations if two final boxes are very close, it can join them.
+The video result shows the heatmap from a series of frames of video.
 
-![alt text][image3]
-
-####2. Show some examples of test images to demonstrate how your pipeline is working.  What did you do to optimize the performance of your classifier?
-
-Ultimately I searched on two scales using YCrCb 3-channel HOG features plus spatially binned color and histograms of color in the feature vector, which provided a nice result.  Here are some example images:
-
-![alt text][image4]
----
-
-### Video Implementation
-
-####1. Provide a link to your final video output.  Your pipeline should perform reasonably well on the entire project video (somewhat wobbly or unstable bounding boxes are ok as long as you are identifying the vehicles most of the time with minimal false positives.)
-Here's a [link to my video result](./project_video.mp4)
-
-
-####2. Describe how (and identify where in your code) you implemented some kind of filter for false positives and some method for combining overlapping bounding boxes.
-
-I recorded the positions of positive detections in each frame of the video.  From the positive detections I created a heatmap and then thresholded that map to identify vehicle positions.  I then used `scipy.ndimage.measurements.label()` to identify individual blobs in the heatmap.  I then assumed each blob corresponded to a vehicle.  I constructed bounding boxes to cover the area of each blob detected.  
-
-Here's an example result showing the heatmap from a series of frames of video, the result of `scipy.ndimage.measurements.label()` and the bounding boxes then overlaid on the last frame of video:
-
-### Here are six frames and their corresponding heatmaps:
-
-![alt text][image5]
+####2. In order to optimize the accurancy I added to recorded the positions of positive detections bounding boxes from the previous frame.
+### Here are 2 frames and their corresponding heatmaps:
 
 ### Here is the output of `scipy.ndimage.measurements.label()` on the integrated heatmap from all six frames:
-![alt text][image6]
 
 ### Here the resulting bounding boxes are drawn onto the last frame in the series:
-![alt text][image7]
-
-
-
----
 
 ###Discussion
 
