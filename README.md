@@ -12,6 +12,9 @@ The steps of this project are the following:
 * Create a heat map of recurring detections frame by frame to reject outliers and follow detected vehicles
 * Create vehicle detection based on the heat map.
 
+Here's a link to my [video result](./project_video_output.mp4)
+Here's a link to my [test video result]( ./test_video_output.mp4)
+
 [//]: # (Image References)
 [image1]: ./examples/data_colection.png
 [image2]: ./examples/YCrCb.png
@@ -22,8 +25,12 @@ The steps of this project are the following:
 [image7]: ./examples/undistorted_image.png
 [image8]: ./examples/sliding_window1.png
 [image9]: ./examples/sliding_window2.png
-[video1]: ./project_video.mp4
-
+[image10]: ./examples/test1.png
+[image11]: ./examples/test2.png
+[image12]: ./examples/test3.png
+[image13]: ./examples/test4.png
+[image14]: ./examples/test5.png
+[image15]: ./examples/test6.png
 
 ## Image Classification (Car or Not car)
 The code for this step is contained in the IPython notebook located in "./Vehicle-detection-training.ipynb"
@@ -65,8 +72,6 @@ These are the parametes elected for HOG feature extraction:
 * `pix_per_cell = 8 #the image grouped in cells of  8x8 pixels` 
 * `cell_per_block = 2 #specifies the local area over which the histogram counts in a given cell will be normalized`
 * `hog_channel = 'ALL' #It will process all the channels`
-
-Note: Adding one more channel will increase a lot of the feature size, in this case I keep it only for accuracy, however it involves longer processing time.
 
 #####b. Get spatial features
 It consist in resize the image in order to get an smaller feature vector (in 1D version of the same image). I resized the image to 32 x 32 pixels with 3 channels. the return will be 32 x 32 x3 = 3072. The code about this feature extraction is  in `bin_spatial` function of the `lesson_functions.py` file.
@@ -114,7 +119,7 @@ I performed Sliding for search veehicles in an image. The code about the this fe
 This is how I performed the Sliding Window:
 ![alt text][image8]
 ![alt text][image9]
-Electing the right Sliding Window will affect drastically the time of processing, because it will mean the times that we need to check if there is car or not (perform all the process). The elected overlapping  is 0.75. They way that I performed it was checking the area of interest and trying to tracking the depth.
+Electing the right Sliding Window will affect drastically the time of processing, because it will mean the times that we need to check if there is car or not (perform all the process). The elected overlapping  is 0.75. The way that I performed it was checking the area of interest and trying to tracking the depth.
 
 ####3. Extract features
 It is the same that the Extract features explained before, however all this is in the `find_cars` funtion of the IPython notebook `"./Vehicle-detection-implementation.ipynb"`.). This because it applies some operations once and not for each sliced window.
@@ -126,16 +131,21 @@ Note: in this case I changed the scale of the image, for the training set I used
 I recorded the positions of positive detections in each frame of the video.  From the positive detections I created a heatmap and then thresholded (in this case it is 2) that map to identify vehicle positions.  I then used `scipy.ndimage.measurements.label()` to identify individual blobs in the heatmap.  I then assumed each blob corresponded to a vehicle.  I constructed bounding boxes to cover the area of each blob detected. I also added in the `draw_labeled_bboxes` function some validations if two final boxes are very close, it can join them.
 The video result shows the heatmap from a series of frames of video.
 
-####2. In order to optimize the accurancy I added to recorded the positions of positive detections bounding boxes from the previous frame.
-### Here are 2 frames and their corresponding heatmaps:
+In order to optimize the accurancy I added to recorded the positions of positive detections bounding boxes from the previous frame.
+###### Here are 6 images with their frames, heatmaps, labels and the resulting bounding boxes:
 
-### Here is the output of `scipy.ndimage.measurements.label()` on the integrated heatmap from all six frames:
+![alt text][image10]
+![alt text][image11]
+![alt text][image12]
+![alt text][image13]
+![alt text][image14]
+![alt text][image15]
 
-### Here the resulting bounding boxes are drawn onto the last frame in the series:
 
 ###Discussion
 
-####1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
+* For HOG features:Adding one more channel will increase a lot of the feature size, in this case I keep it only for accuracy, however it involves longer processing time. 
+* At this point it is nos useful for real time, it is taking a lot of time. 
 
-Here I'll talk about the approach I took, what techniques I used, what worked and why, where the pipeline might fail and how I might improve it if I were going to pursue this project further.  
+
 
