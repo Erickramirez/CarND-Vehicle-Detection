@@ -12,8 +12,8 @@ The steps of this project are the following:
 * Create a heat map of recurring detections frame by frame to reject outliers and follow detected vehicles
 * Create vehicle detection based on the heat map.
 
-*Here's a link to my [video result](./project_video_output.mp4)
-*Here's a link to my [test video result]( ./test_video_output.mp4)
+* Here's a link to my [video result](./project_video_output.mp4)
+* Here's a link to my [test video result]( ./test_video_output.mp4)
 
 [//]: # (Image References)
 [image1]: ./examples/data_colection.png
