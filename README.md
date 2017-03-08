@@ -14,12 +14,14 @@ The steps of this project are the following:
 
 [//]: # (Image References)
 [image1]: ./examples/data_colection.png
-[image2]: ./examples/YCrCb.jpg
-[image3]: ./examples/sliding_windows.jpg
-[image4]: ./examples/sliding_window.jpg
-[image5]: ./examples/bboxes_and_heat.png
-[image6]: ./examples/labels_map.png
-[image7]: ./examples/output_bboxes.png
+[image2]: ./examples/YCrCb.png
+[image3]: ./examples/hog1.png
+[image4]: ./examples/hog2.png
+[image5]: ./examples/hog3.png
+[image6]: ./examples/color_hist.png
+[image7]: ./examples/undistorted_image.png
+[image8]: ./examples/sliding_window1.png
+[image9]: ./examples/sliding_window2.png
 [video1]: ./project_video.mp4
 
 
@@ -106,11 +108,12 @@ The data saved in the parameters.p file is the following:
 ## Implementation
 All the code of this section is in IPython notebook `"./Vehicle-detection-implementation.ipynb"`
 ####1. Apply a distortion correction to raw images
-
+![alt text][image7]
 ####2. Sliding Window for search
 I performed Sliding for search veehicles in an image. The code about the this feature extraction is  in `slide_window` function of the `lesson_functions.py` file.
 This is how I performed the Sliding Window:
-
+![alt text][image8]
+![alt text][image9]
 Electing the right Sliding Window will affect drastically the time of processing, because it will mean the times that we need to check if there is car or not (perform all the process). The elected overlapping  is 0.75. They way that I performed it was checking the area of interest and trying to tracking the depth.
 
 ####3. Extract features
