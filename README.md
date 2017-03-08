@@ -54,7 +54,7 @@ The features extracted are the following:
 
 #####a. Histogram of Oriented Gradients (HOG)
 HOG permits that an image can be described by the distribution of intensity gradients or edge directions. It is some kind of signature of image shape.
-I extracted the HOG features for the 3 channels of the YCbCr. The Y channel (channel 0) has most of the data shape, however when I kept all the channels because I got a little bit better accuracy. 
+I extracted the HOG features for the 3 channels of the YCbCr. The Y channel (channel 0) has most of the data shape, however I kept all the channels because I got a little bit better accuracy. 
 
 The code for this step is contained in the fourth code cell (To call the `extract_features` function) of the IPython notebook `"./Vehicle-detection-training.ipynb"`. The code about the for `skimage.hog()` is in the get_hog_features function of the `lesson_functions.py` file
 Here is an example of one of each of the `vehicle` and `non-vehicle` classes:
@@ -129,9 +129,9 @@ Note: in this case I changed the scale of the image, for the training set I used
 #####a.Apply feature extraction,  svc classification to get boxes where posible there is a car
 #####b.filter for false positives
 I recorded the positions of positive detections in each frame of the video.  From the positive detections I created a heatmap and then thresholded (in this case it is 2) that map to identify vehicle positions.  I then used `scipy.ndimage.measurements.label()` to identify individual blobs in the heatmap.  I then assumed each blob corresponded to a vehicle.  I constructed bounding boxes to cover the area of each blob detected. I also added in the `draw_labeled_bboxes` function some validations if two final boxes are very close, it can join them.
-The video result shows the heatmap from a series of frames of video.
+The video result shows the heatmap of each frame.
 
-In order to optimize the accurancy I added to recorded the positions of positive detections bounding boxes from the previous frame.
+In order to optimize the accurancy I added the resulting bounding boxes of the previous frame as a positive detection.
 ###### Here are 6 images with their frames, heatmaps, labels and the resulting bounding boxes:
 
 ![alt text][image10]
@@ -146,6 +146,5 @@ In order to optimize the accurancy I added to recorded the positions of positive
 
 * For HOG features:Adding one more channel will increase a lot of the feature size, in this case I keep it only for accuracy, however it involves longer processing time. 
 * At this point it is nos useful for real time, it is taking a lot of time. 
-
-
+* Because the sliding Window will affect drastically the time of processing, the area of interes elected will not work for other positions or to vehicle detection in the left side.
 
