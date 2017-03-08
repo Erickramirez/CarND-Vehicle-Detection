@@ -10,7 +10,7 @@ The steps of this project are the following:
 * Apply classifier Linear SVM classifier with training and testing sets.
 * Implement a sliding-window technique and use the trained classifier to search for vehicles in images.
 * Create a heat map of recurring detections frame by frame to reject outliers and follow detected vehicles
-* Create vehicule detection based on the heat map.
+* Create vehicle detection based on the heat map.
 
 [//]: # (Image References)
 [image1]: ./examples/data_colection.png
@@ -32,7 +32,7 @@ the labeled data for [vehicle](https://s3.amazonaws.com/udacity-sdc/Vehicle_Trac
 
 ####2. Perform color space change from [RGB](https://en.wikipedia.org/wiki/RGB_color_model) to [YCrCb](https://en.wikipedia.org/wiki/YCbCr)
 I explored different color spaces and YCbCr has the best performance for the training (For my testing). 
-Y is the luma, it represents the the brightness in an image (the "black-and-white" or achromatic portion of the image). It has a lot of information about the image shape.
+Y is the luma, it represents the brightness in an image (the "black-and-white" or achromatic portion of the image). It has a lot of information about the image shape.
 Cb and Cr are the blue-difference and red-difference chroma components.
 This is the result of this conversion:
 ![alt text][image2]
@@ -45,9 +45,9 @@ The features extracted are the following:
 
 #####a. Histogram of Oriented Gradients (HOG)
 HOG permits that an image can be described by the distribution of intensity gradients or edge directions. It is some kind of signature of image shape.
-I extracted the HOG features for the 3 channels of the YCbCr. Actually the Y channel (channel 0) has most of the data shape, however when I keept the 3 channels because I got a little bit better accurancy. 
+I extracted the HOG features for the 3 channels of the YCbCr. The Y channel (channel 0) has most of the data shape, however when I kept all the channels because I got a little bit better accuracy. 
 
-The code for this step is contained in the fourth code cell (To call the `extract_features` function)  of the IPython notebook `"./Vehicle-detection-training.ipynb"`. The code about the for `skimage.hog()` is in the get_hog_features function of the `lesson_functions.py` file
+The code for this step is contained in the fourth code cell (To call the `extract_features` function) of the IPython notebook `"./Vehicle-detection-training.ipynb"`. The code about the for `skimage.hog()` is in the get_hog_features function of the `lesson_functions.py` file
 Here is an example of one of each of the `vehicle` and `non-vehicle` classes:
 * Channel 0:
 ![alt text][image3]
@@ -58,29 +58,34 @@ Here is an example of one of each of the `vehicle` and `non-vehicle` classes:
 * Channel 2:
 ![alt text][image5]
 
-The parameters used for this are the following:
+These are the parametes elected for HOG feature extraction:
 * `orient = 9 #represents the number of orientation bins that the gradient information will be split up into in the histogram` 
 * `pix_per_cell = 8 #the image grouped in cells of  8x8 pixels` 
 * `cell_per_block = 2 #specifies the local area over which the histogram counts in a given cell will be normalized`
 * `hog_channel = 'ALL' #It will process all the channels`
 
-Note: Adding one more channel will increase a lot of the feature size, in this case i keep it only for a couple of accurancy, however it involves longer processing time.
+Note: Adding one more channel will increase a lot of the feature size, in this case I keep it only for accuracy, however it involves longer processing time.
 
 #####b. Get spatial features
-It consist in resize the image in order to get an smaller feature vector (in 1D version of the same image). I resized the image to 32 x 32 pixeles with 3 channels. the return will be 32 x 32 x3 = 3072. The code about the this feature extraction is  in `bin_spatial` function of the `lesson_functions.py` file.
+It consist in resize the image in order to get an smaller feature vector (in 1D version of the same image). I resized the image to 32 x 32 pixels with 3 channels. the return will be 32 x 32 x3 = 3072. The code about this feature extraction is  in `bin_spatial` function of the `lesson_functions.py` file.
 
 #####c.Get color histogram
 Compute the histogram of the color channels separately and then concatenate them, The number of bins that I used is 16, the result will be 16 x 3 = 48 values.Here is an example of two of each of the `vehicle` and `non-vehicle` classes:
 
+![alt text][image6]
+
 #####d. Concatenate all the features
-I concatenated the 3 extracted feature in order to get a 1 dimension array and then normalize the result.
+I concatenated the 3 extracted feature in order to get a 1 dimension array and then I normalized the result.
 This with the following line `X_scaler = StandardScaler().fit(X)` getting the scaler with `X_scaler = StandardScaler().fit(X)`
 
-####4. Training the data
+####4. Training the data (Support Vector Machines)
+I elected Support Vector Machines because it is effective in high dimensional spaces and uses a subset of training points in the decision function (called support vectors), so it is also memory efficient.
 I performed the following steps (The code for this step is contained in the fourth code cell of the IPython notebook `"./Vehicle-detection-training.ipynb"`.):
-* Define the labels vector (car and notcars)
+* Use feactures and labels as entry for the Support Vector Machines. I Defined the labels vector (car and notcars)
 * Split up data into randomized training and test sets, this in order to validate the training classifier and to know if this can be generalized. The training set is 20 % of all the data: `Train set: 14205 test set: 3552`
-* for the classification I used [sklearn.svm.LinearSVC](http://scikit-learn.org/stable/modules/generated/sklearn.svm.LinearSVC.html) .
+* for the classification I trained Support Vector Machines using [sklearn.svm.LinearSVC](http://scikit-learn.org/stable/modules/generated/sklearn.svm.LinearSVC.html) and `svc.fit(X_train, y_train)`.
+
+The accuracy that I got is: 0.9927
 
 ####5. Save the parametes and trained classifier in a pickle file
 The data saved in the parameters.p file is the following:
@@ -106,10 +111,10 @@ All the code of this section is in IPython notebook `"./Vehicle-detection-implem
 I performed Sliding for search veehicles in an image. The code about the this feature extraction is  in `slide_window` function of the `lesson_functions.py` file.
 This is how I performed the Sliding Window:
 
-Electing the right Sliding Window will affect drastically the time of processing, because it will mean the times that we need to check if there is car or not (perform all the process). For all I elected an overlap of 0.75.
+Electing the right Sliding Window will affect drastically the time of processing, because it will mean the times that we need to check if there is car or not (perform all the process). The elected overlapping  is 0.75. They way that I performed it was checking the area of interest and trying to tracking the depth.
 
 ####3. Extract features
-It is the same that the Extract features explained before, however all this is in the `find_cars` funtion of the IPython notebook `"./Vehicle-detection-implementation.ipynb"`.). This because it applies some operations onces and not for each slided window.
+It is the same that the Extract features explained before, however all this is in the `find_cars` funtion of the IPython notebook `"./Vehicle-detection-implementation.ipynb"`.). This because it applies some operations once and not for each sliced window.
 Note: in this case I changed the scale of the image, for the training set I used PNG files that are float (0..1) and the video reads JPEG files that are int values (0..255) `img = img.astype(np.float32)/255`
 
 ####4. Find car (Process performed on each Window)
