@@ -8,7 +8,7 @@ The steps of this project are the following:
 * Append binned color features, as well as histograms of color, to the HOG feature vector. All this has been normalized.
 * Randomize a selection for training and testing sets.
 * Apply classifier Linear SVM classifier with training and testing sets.
-* Implement a sliding-window technique and use your trained classifier to search for vehicles in images.
+* Implement a sliding-window technique and use the trained classifier to search for vehicles in images.
 * Create a heat map of recurring detections frame by frame to reject outliers and follow detected vehicles
 * Create vehicule detection based on the heat map.
 
@@ -38,9 +38,9 @@ The features extracted are the following:
 * Get spatial features
 * Get color histogram
 
-#####1. Histogram of Oriented Gradients (HOG)
+#####a. Histogram of Oriented Gradients (HOG)
 
-######a. Explain how (and identify where in your code) you extracted HOG features from the training images.
+######i. Explain how (and identify where in your code) you extracted HOG features from the training images.
 
 The code for this step is contained in the first code cell of the IPython notebook (or in lines # through # of the file called `some_file.py`).  
 
@@ -59,6 +59,7 @@ Here is an example using the `YCrCb` color space and HOG parameters of `orientat
 
 I tried various combinations of parameters and...
 
+##### 4
 ####3. Describe how (and identify where in your code) you trained a classifier using your selected HOG features (and color features if you used them).
 
 I trained a linear SVM using...
