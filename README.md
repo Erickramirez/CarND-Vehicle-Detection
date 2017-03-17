@@ -112,9 +112,9 @@ The data saved in the parameters.p file is the following:
 
 ## Implementation
 All the code of this section is in IPython notebook `"./Vehicle-detection-implementation.ipynb"`
-####1. Apply a distortion correction to raw images
+#### 1. Apply a distortion correction to raw images
 ![alt text][image7]
-####2. Sliding Window for search
+#### 2. Sliding Window for search
 I performed Sliding for search veehicles in an image. The code about the this feature extraction is  in `slide_window` function of the `lesson_functions.py` file.
 This is how I performed the Sliding Window:
 ![alt text][image8]
