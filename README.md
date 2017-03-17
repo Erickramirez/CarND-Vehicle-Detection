@@ -35,7 +35,7 @@ The steps of this project are the following:
 ## Image Classification (Car or Not car)
 The code for this step is contained in the IPython notebook located in "./Vehicle-detection-training.ipynb"
 
-####1. Collecting the Data
+#### 1. Collecting the Data
 the labeled data for [vehicle](https://s3.amazonaws.com/udacity-sdc/Vehicle_Tracking/vehicles.zip) and [non-vehicle](https://s3.amazonaws.com/udacity-sdc/Vehicle_Tracking/non-vehicles.zip) examples to train my classifier. This is the amount of data used: ´cars: 8789 notcars: 8968´. Note: in this case I didn't use any image augmentation technique.  These are some examples of the data, in this case there are only 2 classes:
 ![alt text][image1]
 
