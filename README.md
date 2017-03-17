@@ -97,18 +97,18 @@ The accuracy that I got is: 0.9927
 #### 5. Save the parametes and trained classifier in a pickle file
 The data saved in the parameters.p file is the following:
 
-*spatial_feat # Spatial features on or off
-*hist_feat # Histogram features on or off
-*hog_feat # HOG features on or off
-*orient    #for HOG
-*pix_per_cell  #for HOG
-*cell_per_block #for HOG 
-*hog_channel # for HOG
-*spatial_size #for spatial_features
-*hist_bins #for color_hist
-*X_scaler #Scaler for final feature vector
-*svc # trained classifier
-*color_space 
+* spatial_feat # Spatial features on or off
+* hist_feat # Histogram features on or off
+* hog_feat # HOG features on or off
+* orient    #for HOG
+* pix_per_cell  #for HOG
+* cell_per_block #for HOG 
+* hog_channel # for HOG
+* spatial_size #for spatial_features
+* hist_bins #for color_hist
+* X_scaler #Scaler for final feature vector
+* svc # trained classifier
+* color_space 
 
 ## Implementation
 All the code of this section is in IPython notebook `"./Vehicle-detection-implementation.ipynb"`
